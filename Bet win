@@ -1,0 +1,68 @@
+// activity_main.xml (Grid style for game cards)
+<androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/gamesRecyclerView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp"
+    android:clipToPadding="false"
+    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+    app:spanCount="3"
+/>
+// MainActivity.kt
+class MainActivity : AppCompatActivity() {
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: GamesAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        recyclerView = findViewById(R.id.gamesRecyclerView)
+        recyclerView.layoutManager = GridLayoutManager(this, 3)
+
+        val gamesList = listOf(
+            Game("Aviator", R.drawable.aviator_icon),
+            Game("Evolution", R.drawable.evolution_icon),
+            // Add the rest of your games here
+        )
+
+        adapter = GamesAdapter(gamesList)
+        recyclerView.adapter = adapter
+    }
+}// Simple Game data class
+data class Game(val name: String, val iconResId: Int)
+// GamesAdapter.kt (simplified)
+class GamesAdapter(private val games: List<Game>) :
+    RecyclerView.Adapter<GamesAdapter.GameViewHolder>() {
+
+    class GameViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val gameIcon: ImageView = view.findViewById(R.id.gameIcon)
+        val gameName: TextView = view.findViewById(R.id.gameName)
+    }<!-- game_item.xml -->
+<LinearLayout ... >
+    <ImageView
+        android:id="@+id/gameIcon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        ... />
+    <TextView
+        android:id="@+id/gameName"
+        ... />
+</LinearLayout>
+
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.game_item, parent, false)
+        return GameViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: GameViewHolder, position: Int) {
+        val game = games[position]
+        holder.gameIcon.setImageResource(game.iconResId)
+        holder.gameName.text = game.name
+    }
+
+    override fun getItemCount() = games.size
+}
+
